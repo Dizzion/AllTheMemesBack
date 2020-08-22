@@ -50,17 +50,32 @@ public class MemesController {
         }
     }
 
+    @GetMapping("/search/{hashtag}")
+    public ResponseEntity<List<Memes>> getMemesByHashTag(@PathVariable("hashtag") String hashTag) {
+        try {
+            List<Memes> memesList = memesRepository.findAll();
+            List<Memes> _meme = new ArrayList<Memes>();
+            memesList.forEach(meme -> {
+                if (meme.getHashTags().contains(hashTag)) {
+                    _meme.add(meme);
+                }
+            });
+            if (memesList.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            } else if (_meme.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(_meme, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Memes> getMemeById(@PathVariable("id") String id) {
         Optional<Memes> memeData = memesRepository.findById(id);
 
         if (memeData.isPresent()) {
-//            List<Comments> coms = new ArrayList<Comments>();
-//            commentsRepository.findByMemeId(id).forEach(coms::add);
-//            Memes _meme = memeData.get();
-//            _meme.setComments(coms);
-//            memesRepository.save(_meme);
-//            new ResponseEntity<>(coms, HttpStatus.OK);
             return new ResponseEntity<>(memeData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -85,7 +100,8 @@ public class MemesController {
     @PostMapping("/")
     public ResponseEntity<Memes> createMeme(@RequestBody Memes meme) {
         try {
-            Memes _meme = memesRepository.save(new Memes(meme.getUrl(), meme.getDisLikes(), meme.getLikes(), meme.isTrending()));
+            Memes _meme = memesRepository.save(new Memes(meme.getUrl(), meme.getHashTags(), meme.getDisLikes(), meme.getLikes(), meme.isTrending()));
+
             return new ResponseEntity<>(_meme, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -99,6 +115,8 @@ public class MemesController {
         if (memeData.isPresent()) {
             Memes _meme = memeData.get();
             _meme.setUrl(meme.getUrl());
+            _meme.setHashTags(meme.getHashTags());
+
             return new ResponseEntity<>(memesRepository.save(_meme), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -108,6 +126,10 @@ public class MemesController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> deleteGameById(@PathVariable("id") String id) {
         try {
+            List<Comments> coms = commentsRepository.findByMemeId(id);
+            coms.forEach(com -> {
+                commentsRepository.delete(com);
+            });
             memesRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {

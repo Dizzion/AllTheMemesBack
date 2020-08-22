@@ -16,6 +16,7 @@ public class Memes {
     private String id;
 
     private String url;
+    private List<String> hashTags = new ArrayList<String>();
     private int disLikes;
     private int likes;
     private boolean isTrending;
@@ -23,12 +24,14 @@ public class Memes {
     @DBRef
     private List<Comments> comments = new ArrayList<Comments>();
 
-    public Memes(String url, int disLikes, int likes, boolean isTrending) {
+    public Memes(String url, List<String> hashTags, int disLikes, int likes, boolean isTrending) {
         this.url = url;
+        this.hashTags = hashTags;
         this.disLikes = disLikes;
         this.likes = likes;
         this.isTrending = isTrending;
     }
+
 
     public String getId() {
         return id;
@@ -44,6 +47,14 @@ public class Memes {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<String> getHashTags() {
+        return hashTags;
+    }
+
+    public void setHashTags(List<String> hashTags) {
+        this.hashTags = hashTags;
     }
 
     public List<Comments> getComments() {
