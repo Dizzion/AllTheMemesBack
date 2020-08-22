@@ -5,7 +5,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "Memes")
@@ -15,17 +16,15 @@ public class Memes {
     private String id;
 
     private String url;
-    private Date addedDate;
     private int disLikes;
     private int likes;
     private boolean isTrending;
 
     @DBRef
-    private List<Comments> comments;
+    private List<Comments> comments = new ArrayList<Comments>();
 
-    public Memes(String url, Date addedDate, int disLikes, int likes, boolean isTrending) {
+    public Memes(String url, int disLikes, int likes, boolean isTrending) {
         this.url = url;
-        this.addedDate = addedDate;
         this.disLikes = disLikes;
         this.likes = likes;
         this.isTrending = isTrending;
@@ -47,12 +46,12 @@ public class Memes {
         this.url = url;
     }
 
-    public Date getAddedDate() {
-        return addedDate;
+    public List<Comments> getComments() {
+        return comments;
     }
 
-    public void setAddedDate(Date addedDate) {
-        this.addedDate = addedDate;
+    public void setComments(List<Comments> comments) {
+        this.comments = comments;
     }
 
     public int getDisLikes() {
