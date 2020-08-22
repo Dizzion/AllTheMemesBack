@@ -1,8 +1,6 @@
 package com.memes.backend.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 @Document(collection = "Memes")
-@Getter @Setter @NoArgsConstructor
 public class Memes {
 
     @Id
@@ -32,5 +29,53 @@ public class Memes {
         this.disLikes = disLikes;
         this.likes = likes;
         this.isTrending = isTrending;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Date getAddedDate() {
+        return addedDate;
+    }
+
+    public void setAddedDate(Date addedDate) {
+        this.addedDate = addedDate;
+    }
+
+    public int getDisLikes() {
+        return disLikes;
+    }
+
+    public void setDisLikes(int disLikes) {
+        this.disLikes = disLikes;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
+    public boolean isTrending() {
+        return isTrending;
+    }
+
+    public void setTrending(boolean trending) {
+        isTrending = trending;
     }
 }
