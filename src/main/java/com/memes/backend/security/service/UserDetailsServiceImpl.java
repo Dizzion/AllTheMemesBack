@@ -1,4 +1,4 @@
-package com.memes.backend.service;
+package com.memes.backend.security.service;
 
 import com.memes.backend.model.User;
 import com.memes.backend.repository.UserRepository;
@@ -19,6 +19,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
+
         return UserDetailsImpl.build(user);
     }
+
 }

@@ -7,15 +7,16 @@ import com.memes.backend.repository.MemesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "api/v1")
+@RequestMapping(value = "/api")
 public class MemesController {
 
     @Autowired
@@ -23,7 +24,7 @@ public class MemesController {
     @Autowired
     private CommentsRepository commentsRepository;
 
-    @GetMapping("/")
+    @GetMapping("/memes")
     public ResponseEntity<List<Memes>> getTrending() {
         try {
             List<Memes> memes = new ArrayList<Memes>();
@@ -50,7 +51,7 @@ public class MemesController {
         }
     }
 
-    @GetMapping("/search/{hashtag}")
+    @GetMapping("/memes/search/{hashtag}")
     public ResponseEntity<List<Memes>> getMemesByHashTag(@PathVariable("hashtag") String hashTag) {
         try {
             List<Memes> memesList = memesRepository.findAll();
@@ -71,7 +72,7 @@ public class MemesController {
         }
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/memes/{id}")
     public ResponseEntity<Memes> getMemeById(@PathVariable("id") String id) {
         Optional<Memes> memeData = memesRepository.findById(id);
 
@@ -82,7 +83,7 @@ public class MemesController {
         }
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/memes/{id}")
     public ResponseEntity<Comments> createComment(@PathVariable("id") String id, @RequestBody Comments comment) {
         try {
             Comments _comment = commentsRepository.save(new Comments(comment.getBody(), comment.getUserPosted(), id));
@@ -97,7 +98,7 @@ public class MemesController {
         }
     }
 
-    @PostMapping("/")
+    @PostMapping("/memes")
     public ResponseEntity<Memes> createMeme(@RequestBody Memes meme) {
         try {
             Memes _meme = memesRepository.save(new Memes(meme.getUrl(), meme.getHashTags(), meme.getDisLikes(), meme.getLikes(), meme.isTrending()));
@@ -108,7 +109,7 @@ public class MemesController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/memes/{id}")
     public ResponseEntity<Memes> updateMemeById(@PathVariable("id") String id, @RequestBody Memes meme) {
         Optional<Memes> memeData = memesRepository.findById(id);
 
@@ -123,7 +124,8 @@ public class MemesController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/memes/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteGameById(@PathVariable("id") String id) {
         try {
             List<Comments> coms = commentsRepository.findByMemeId(id);

@@ -1,4 +1,4 @@
-package com.memes.backend.service;
+package com.memes.backend.security.service;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -39,6 +39,7 @@ public class UserDetailsImpl implements UserDetails {
         List<GrantedAuthority> authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toList());
+
         return new UserDetailsImpl(
                 user.getId(),
                 user.getUsername(),
@@ -52,17 +53,8 @@ public class UserDetailsImpl implements UserDetails {
         return authorities;
     }
 
-    public static long getSerialVersionUID() {
-        return serialVersionUID;
-    }
-
     public String getId() {
         return id;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
     }
 
     public String getEmail() {
@@ -75,12 +67,17 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
+    public String getUsername() {
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
         return true;
     }
 

@@ -3,14 +3,14 @@ package com.memes.backend.controller;
 import com.memes.backend.model.ERole;
 import com.memes.backend.model.Role;
 import com.memes.backend.model.User;
-import com.memes.backend.payload.MessageResponse;
-import com.memes.backend.payload.SignupRequest;
-import com.memes.backend.payload.LoginRequest;
-import com.memes.backend.payload.JwtResponse;
+import com.memes.backend.payload.response.MessageResponse;
+import com.memes.backend.payload.request.SignupRequest;
+import com.memes.backend.payload.request.LoginRequest;
+import com.memes.backend.payload.response.JwtResponse;
 import com.memes.backend.repository.RoleRepository;
 import com.memes.backend.repository.UserRepository;
-import com.memes.backend.service.JwtUtils;
-import com.memes.backend.service.UserDetailsImpl;
+import com.memes.backend.security.jwt.JwtUtils;
+import com.memes.backend.security.service.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/v1/auth")
+@RequestMapping("/api/auth")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -43,8 +43,10 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
 

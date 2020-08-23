@@ -1,4 +1,4 @@
-package com.memes.backend.payload;
+package com.memes.backend.payload.response;
 
 public class MessageResponse {
     private String message;
