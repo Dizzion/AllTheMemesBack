@@ -7,7 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Document(collection = "users")
@@ -30,6 +32,9 @@ public class User {
 
     @DBRef
     private Set<Role> roles = new HashSet<>();
+
+    @DBRef
+    private List<Memes> userMemes = new ArrayList<Memes>();
 
     public User() {
 
@@ -79,5 +84,13 @@ public class User {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<Memes> getUserMemes() {
+        return userMemes;
+    }
+
+    public void setUserMemes(List<Memes> userMemes) {
+        this.userMemes = userMemes;
     }
 }

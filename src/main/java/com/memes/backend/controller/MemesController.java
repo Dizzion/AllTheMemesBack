@@ -1,18 +1,25 @@
 package com.memes.backend.controller;
 
 import com.memes.backend.model.Comments;
+import com.memes.backend.model.ERole;
 import com.memes.backend.model.Memes;
+import com.memes.backend.model.User;
 import com.memes.backend.repository.CommentsRepository;
 import com.memes.backend.repository.MemesRepository;
+import com.memes.backend.repository.RoleRepository;
+import com.memes.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
@@ -23,6 +30,10 @@ public class MemesController {
     private MemesRepository memesRepository;
     @Autowired
     private CommentsRepository commentsRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RoleRepository roleRepository;
 
     @GetMapping("/memes")
     public ResponseEntity<List<Memes>> getTrending() {
@@ -99,6 +110,7 @@ public class MemesController {
     }
 
     @PostMapping("/memes")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Memes> createMeme(@RequestBody Memes meme) {
         try {
             Memes _meme = memesRepository.save(new Memes(meme.getUrl(), meme.getHashTags(), meme.getDisLikes(), meme.getLikes(), meme.isTrending()));
@@ -110,12 +122,12 @@ public class MemesController {
     }
 
     @PutMapping("/memes/{id}")
+    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<Memes> updateMemeById(@PathVariable("id") String id, @RequestBody Memes meme) {
         Optional<Memes> memeData = memesRepository.findById(id);
 
         if (memeData.isPresent()) {
             Memes _meme = memeData.get();
-            _meme.setUrl(meme.getUrl());
             _meme.setHashTags(meme.getHashTags());
 
             return new ResponseEntity<>(memesRepository.save(_meme), HttpStatus.OK);
@@ -125,7 +137,7 @@ public class MemesController {
     }
 
     @DeleteMapping("/memes/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('MODERATOR') or hasRole('ADMIN')")
     public ResponseEntity<HttpStatus> deleteGameById(@PathVariable("id") String id) {
         try {
             List<Comments> coms = commentsRepository.findByMemeId(id);
