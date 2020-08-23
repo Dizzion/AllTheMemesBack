@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/api/v1")
 public class MemesController {
 
     @Autowired
