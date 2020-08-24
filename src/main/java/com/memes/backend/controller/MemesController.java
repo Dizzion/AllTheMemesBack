@@ -159,7 +159,7 @@ public class MemesController {
 //            get the meme data from the pointer and save the editable value
             Memes _meme = memeData.get();
             _meme.setHashTags(meme.getHashTags());
-
+            _meme.setTrending(meme.isTrending());
             return new ResponseEntity<>(memesRepository.save(_meme), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
