@@ -148,6 +148,36 @@ public class MemesController {
         }
     }
 
+    @PutMapping("/memes/likes/{id}")
+    public ResponseEntity<Memes> updateLikesMemeById(@PathVariable("id") String id, @RequestBody Memes meme) {
+//        find the pointer of the memedata from the repository based on id
+        Optional<Memes> memeData = memesRepository.findById(id);
+
+        if (memeData.isPresent()) {
+//            get the meme data from the pointer and save the editable value
+            Memes _meme = memeData.get();
+            _meme.setLikes(meme.getLikes());
+            return new ResponseEntity<>(memesRepository.save(_meme), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @PutMapping("/memes/disLikes/{id}")
+    public ResponseEntity<Memes> updateDisLikesMemeById(@PathVariable("id") String id, @RequestBody Memes meme) {
+//        find the pointer of the memedata from the repository based on id
+        Optional<Memes> memeData = memesRepository.findById(id);
+
+        if (memeData.isPresent()) {
+//            get the meme data from the pointer and save the editable value
+            Memes _meme = memeData.get();
+            _meme.setDisLikes(meme.getDisLikes());
+            return new ResponseEntity<>(memesRepository.save(_meme), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
 //    update meme based on its id
     @PutMapping("/memes/{id}")
     @PreAuthorize("hasRole('USER') or hasRole('MODERATOR') or hasRole('ADMIN')")
