@@ -75,6 +75,12 @@ public class MemesController {
         try {
 //            create lists for each meme set
             List<Memes> memesList = memesRepository.findAll();
+            if (hashTag == "all" || hashTag == "All" || hashTag == "ALL") {
+                if (memesList.isEmpty()) {
+                    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+                }
+                return new ResponseEntity<>(memesList, HttpStatus.OK);
+            }
             List<Memes> _meme = new ArrayList<Memes>();
 //            loop over all memes to see if they contain the searched hashtag
             memesList.forEach(meme -> {
@@ -82,9 +88,7 @@ public class MemesController {
                     _meme.add(meme);
                 }
             });
-            if (memesList.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            } else if (_meme.isEmpty()) {
+            if (_meme.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(_meme, HttpStatus.OK);
